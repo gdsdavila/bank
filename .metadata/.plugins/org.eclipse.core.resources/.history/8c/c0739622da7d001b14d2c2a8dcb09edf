@@ -1,0 +1,41 @@
+package entities;
+
+public class Conta {
+	private int numberAccount;
+	private String name;
+	private double balance;
+	
+	public Conta() {
+		
+	}
+	
+	public Conta(int numberAccount, String name, double balance) {
+		this.numberAccount = numberAccount;
+		this.name = name;
+		this.balance = balance;
+	}
+
+	public int getNumberAccount() {
+		return numberAccount;
+	}
+
+	public void setNumberAccount(int numberAccount) {
+		this.numberAccount = numberAccount;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public double getBalance() {
+		return balance;
+	}
+
+	public void setSBalance(double balance) {
+		this.balance = balance;
+	}
+}
