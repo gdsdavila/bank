@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meu Curso</title>
+<style>
+:root{--bg:#f4f6f8;--surface:#fff;--ink:#14213d;--muted:#5b6678;--line:#d9dfe7;--accent:#0f766e;--accent-ink:#fff;--shadow:0 1px 2px rgba(20,33,61,.08);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1726;--surface:#16223a;--ink:#e8edf6;--muted:#9aa8c0;--line:#27365a;--accent:#f2b84b;--accent-ink:#14213d;--shadow:none;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1726;--surface:#16223a;--ink:#e8edf6;--muted:#9aa8c0;--line:#27365a;--accent:#f2b84b;--accent-ink:#14213d;--shadow:none;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style",Georgia,serif;line-height:1.2;margin:0}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.hidden{display:none!important}
+
+/* Login */
+#login{min-height:100vh;display:grid;place-items:center;padding:24px}
+.login-box{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:32px;box-shadow:var(--shadow)}
+.login-box h1{font-size:28px;margin-bottom:6px}
+.login-box p{color:var(--muted);margin:0 0 22px}
+label{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
+input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:6px;padding:11px 18px;font-weight:600}
+.login-box .btn{width:100%;margin-top:20px}
+#erro{color:#c0392b;font-size:14px;margin:12px 0 0;min-height:20px}
+
+/* App */
+header{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:12px 24px;flex-wrap:wrap}
+header .brand{font-family:"Iowan Old Style",Georgia,serif;font-size:21px;font-weight:700;margin-right:auto}
+nav{display:flex;gap:4px}
+nav button{background:none;border:0;color:var(--muted);padding:8px 14px;border-radius:6px;font-weight:600}
+nav button[aria-current="page"]{background:var(--bg);color:var(--ink)}
+.ghost{background:none;border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:7px 12px}
+main{max-width:1180px;margin:0 auto;padding:28px 24px 64px}
+
+/* Aulas */
+.aulas{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:28px;align-items:start}
+.player{aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;display:grid;place-items:center}
+.player iframe,.player video{width:100%;height:100%;border:0}
+.player .vazio{color:#cbd5e1;padding:24px;text-align:center;max-width:420px}
+.aula-info{margin-top:18px;display:flex;gap:16px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.aula-info h2{font-size:26px}
+.aula-info p{color:var(--muted);margin:6px 0 0;max-width:62ch}
+.lista{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.lista h3{font-size:18px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.item{display:flex;width:100%;text-align:left;gap:12px;align-items:center;padding:13px 18px;background:none;border:0;border-bottom:1px solid var(--line);color:var(--ink)}
+.item:last-child{border-bottom:0}
+.item[aria-current="true"]{background:var(--bg);box-shadow:inset 4px 0 0 var(--accent)}
+.item .t{flex:1}
+.item small{display:block;color:var(--muted)}
+.ok{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;flex:none}
+.ok.feito{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.progresso{padding:14px 18px;color:var(--muted);font-size:14px}
+.barra{height:6px;background:var(--line);border-radius:3px;margin-top:8px;overflow:hidden}
+.barra i{display:block;height:100%;background:var(--accent)}
+
+/* Livros */
+.livros h2{font-size:30px}
+.livros>p{color:var(--muted);margin:6px 0 24px}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:22px}
+.livro{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.capa{aspect-ratio:3/4;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;padding:20px;text-align:center;font-family:"Iowan Old Style",Georgia,serif;font-size:22px;font-weight:700}
+.capa img{width:100%;height:100%;object-fit:cover}
+.livro .corpo{padding:16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.livro h3{font-size:18px}
+.livro .autor{color:var(--muted);font-size:14px}
+.livro .desc{font-size:14px;flex:1}
+.livro .preco{font-weight:700;font-size:18px;margin-top:8px}
+.livro a.btn{text-decoration:none;text-align:center;margin-top:8px}
+
+select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+.acoes{display:flex;gap:8px;flex-wrap:wrap}
+.edit{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+.edit .btn{margin-top:6px}
+#e-msg,#admin-msg{color:var(--muted);min-height:22px;margin:10px 0 0;font-size:14px}
+.admin h2{font-size:30px}
+.admin>p{color:var(--muted);margin:6px 0 22px;max-width:70ch}
+.admin h3{font-size:20px;margin:8px 0 6px}
+.novo{display:grid;grid-template-columns:2fr 1.2fr 1fr auto;gap:14px;align-items:end;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+.novo label{margin-top:0}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);margin:8px 0 32px}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);font-size:15px}
+#export-txt{margin-top:14px;font-family:ui-monospace,Menlo,monospace;font-size:13px}
+td select{width:auto;padding:6px 8px}
+a.btn{text-decoration:none;display:inline-block}
+.grande{padding:14px 24px;font-size:17px}
+.topo{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:12px 24px;flex-wrap:wrap}
+.topo .brand{font-family:"Iowan Old Style",Georgia,serif;font-size:21px;font-weight:700;margin-right:auto}
+#inicio .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.hero{padding:72px 0 56px;background:var(--surface);border-bottom:1px solid var(--line)}
+.selo{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+.hero h1{font-size:clamp(32px,5vw,52px);max-width:20ch}
+.hero .sub{font-size:19px;color:var(--muted);max-width:56ch;margin:18px 0 28px}
+.bloco{padding-top:56px}
+.bloco h2{font-size:30px;margin-bottom:18px}
+.bloco>p{max-width:70ch;font-size:17px;margin:0}
+.destaques{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;list-style:none;padding:0;margin:24px 0 0}
+.destaques li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;font-weight:600}
+.videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+.vcard h3{font-size:18px;margin-top:10px}
+.modulos{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.modulos li{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px}
+.depoimentos{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.dep{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px;display:flex;flex-direction:column;gap:16px;margin:0}
+.dep blockquote{margin:0;font-size:16px;flex:1}
+.dep .quem{display:flex;gap:12px;align-items:center}
+.dep .quem small{display:block;color:var(--muted)}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;overflow:hidden;flex:none}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.final{margin:64px 0;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:44px 24px}
+.final h2{font-size:30px;margin-bottom:10px}
+.final p{color:var(--muted);margin:0 0 24px}
+#inicio footer{text-align:center;color:var(--muted);font-size:14px;padding:0 24px 40px}
+.voltar{background:none;border:0;color:var(--muted);padding:0;margin-top:16px;text-decoration:underline;width:100%}
+@media (max-width:860px){.novo{grid-template-columns:1fr}.aulas{grid-template-columns:1fr}main{padding:20px 16px 48px}header{padding:10px 16px}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+</head>
+<body>
+
+<!-- ========== PÁGINA INICIAL (pública) ========== -->
+<section id="inicio">
+  <header class="topo">
+    <span class="brand" id="lp-marca"></span>
+    <button class="ghost js-tema" aria-label="Alternar modo claro e escuro"></button>
+    <button class="ghost" id="lp-entrar">Já sou aluno · Entrar</button>
+    <a class="btn js-inscrever" target="_blank" rel="noopener">Inscreva-se</a>
+  </header>
+  <div class="hero"><div class="wrap">
+    <p class="selo" id="lp-selo"></p>
+    <h1 id="lp-titulo"></h1>
+    <p class="sub" id="lp-sub"></p>
+    <div class="acoes">
+      <a class="btn grande js-inscrever" target="_blank" rel="noopener">Quero me inscrever</a>
+      <button class="ghost grande" id="lp-entrar2">Acessar a área do aluno</button>
+    </div>
+  </div></div>
+  <div class="wrap">
+    <section class="bloco"><h2>Sobre o curso</h2><p id="lp-sobre"></p><ul class="destaques" id="lp-destaques"></ul></section>
+    <section class="bloco"><h2>Conheça o curso em vídeo</h2><div class="videos" id="lp-videos"></div></section>
+    <section class="bloco"><h2>O que você vai aprender</h2><ul class="modulos" id="lp-modulos"></ul></section>
+    <section class="bloco"><h2>O que dizem os alunos</h2><div class="depoimentos" id="lp-depoimentos"></div></section>
+    <section class="final">
+      <h2>Pronto para começar?</h2>
+      <p>Faça sua inscrição e comece hoje mesmo.</p>
+      <a class="btn grande js-inscrever" target="_blank" rel="noopener">Quero me inscrever</a>
+    </section>
+  </div>
+  <footer id="lp-rodape"></footer>
+</section>
+
+<!-- ========== LOGIN ========== -->
+<section id="login" class="hidden">
+  <div class="login-box">
+    <h1>Meu Curso</h1>
+    <p>Entre com seu e-mail e senha para acessar as aulas.</p>
+    <form id="form-login" autocomplete="on">
+      <label for="usuario">E-mail</label>
+      <input id="usuario" name="usuario" type="email" autocomplete="username" required>
+      <label for="senha">Senha</label>
+      <input id="senha" name="senha" type="password" autocomplete="current-password" required>
+      <button class="btn" type="submit">Entrar</button>
+      <p id="erro" role="alert"></p>
+      <button type="button" class="voltar" id="voltar">← Voltar à página inicial</button>
+    </form>
+  </div>
+</section>
+
+<!-- ========== SITE ========== -->
+<div id="app" class="hidden">
+  <header>
+    <span class="brand">Meu Curso</span>
+    <nav aria-label="Principal">
+      <button id="nav-aulas" aria-current="page">Aulas</button>
+      <button id="nav-livros">Livros</button>
+      <button id="nav-admin" class="hidden">Administração</button>
+    </nav>
+    <button class="ghost js-tema" aria-label="Alternar modo claro e escuro"></button>
+    <button id="sair" class="ghost">Sair</button>
+  </header>
+  <main>
+    <section id="view-aulas" class="aulas">
+      <div>
+        <div class="player" id="player"></div>
+        <div class="aula-info">
+          <div><h2 id="aula-titulo"></h2><p id="aula-desc"></p></div>
+          <div class="acoes"><button class="btn" id="concluir"></button><button class="ghost hidden" id="editar">Editar aula</button></div>
+        </div>
+        <form id="form-edit" class="edit hidden">
+          <label for="e-titulo">Título</label><input id="e-titulo">
+          <label for="e-desc">Descrição</label><textarea id="e-desc" rows="3"></textarea>
+          <label for="e-src">Link do vídeo</label><input id="e-src" placeholder="https://www.youtube.com/embed/CODIGO">
+          <p id="e-msg" role="alert"></p>
+          <button class="btn" type="submit">Salvar aula</button>
+        </form>
+      </div>
+      <aside class="lista">
+        <h3>Conteúdo do curso</h3>
+        <div id="itens"></div>
+        <div class="progresso"><span id="prog-txt"></span><div class="barra"><i id="prog-barra"></i></div></div>
+      </aside>
+    </section>
+
+    <section id="view-livros" class="livros hidden">
+      <h2>Livros à venda</h2>
+      <p>Materiais complementares para aprofundar o que você aprende no curso.</p>
+      <div class="grade" id="grade"></div>
+    </section>
+
+    <section id="view-admin" class="admin hidden">
+      <h2>Administração</h2>
+      <p>Cadastre quem pode entrar no site. “Com escrita” permite editar título, descrição e vídeo das aulas; “Somente leitura” só permite assistir.</p>
+      <form id="form-novo" class="novo">
+        <div><label for="n-email">E-mail</label><input id="n-email" type="email" required></div>
+        <div><label for="n-senha">Senha</label><input id="n-senha" type="text" minlength="6" required></div>
+        <div><label for="n-escrita">Permissão</label><select id="n-escrita"><option value="0">Somente leitura</option><option value="1">Com escrita</option></select></div>
+        <button class="btn" type="submit">Criar usuário</button>
+      </form>
+      <p id="admin-msg" role="status"></p>
+      <div style="overflow-x:auto"><table><thead><tr><th>E-mail</th><th>Permissão</th><th>Ação</th></tr></thead><tbody id="usuarios-lista"></tbody></table></div>
+      
+    </section>
+  </main>
+</div>
+
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO — é só aqui que você precisa mexer
+   ===================================================================== */
+
+// 0) PÁGINA INICIAL PÚBLICA — tudo o que está aqui aparece para qualquer visitante,
+//    antes do login. Edite os textos, links de vídeo, depoimentos e o link de inscrição.
+const PAGINA = {
+  marca: "Meu Curso",
+  selo: "Curso online · 8 módulos em vídeo",
+  titulo: "Escreva aqui a grande promessa do seu curso",
+  subtitulo: "Uma frase explicando para quem é o curso e qual resultado o aluno vai alcançar.",
+  sobre: "Escreva aqui a apresentação do curso: quem é você, por que criou o curso, o problema que ele resolve e como as aulas vão ajudar o aluno.",
+  destaques: ["8 módulos em vídeo", "Aulas de 15 minutos", "Estude no seu ritmo", "Livros complementares"],
+  // Vídeos de apresentação (YouTube: https://www.youtube.com/embed/CODIGO | Vimeo: https://player.vimeo.com/video/NUMERO | arquivo: videos/apresentacao.mp4)
+  videos: [
+    { titulo: "Conheça o curso", src: "" },
+    { titulo: "Uma palavra do professor", src: "" }
+  ],
+  modulos: [
+    "Introdução: boas-vindas e como aproveitar o curso",
+    "Módulo 1: título do módulo",
+    "Módulo 2: título do módulo",
+    "Módulo 3: título do módulo",
+    "Módulo 4: título do módulo",
+    "Módulo 5: título do módulo",
+    "Módulo 6: título do módulo",
+    "Módulo 7: título do módulo",
+    "Módulo 8: título do módulo"
+  ],
+  // "foto" é opcional (link ou "imagens/aluno1.jpg"); sem foto aparece a inicial do nome
+  depoimentos: [
+    { nome: "Nome do aluno", detalhe: "Profissão ou cidade", texto: "Escreva aqui o depoimento de um aluno sobre o curso.", foto: "" },
+    { nome: "Nome do aluno", detalhe: "Profissão ou cidade", texto: "Escreva aqui o depoimento de um aluno sobre o curso.", foto: "" },
+    { nome: "Nome do aluno", detalhe: "Profissão ou cidade", texto: "Escreva aqui o depoimento de um aluno sobre o curso.", foto: "" }
+  ],
+  linkInscricao: "https://exemplo.com/inscricao",
+  rodape: "© Meu Curso. Todos os direitos reservados."
+};
+
+// 1) CONEXÃO COM O SUPABASE (veja o arquivo supabase-passo-a-passo.md)
+//    A chave "publishable" foi feita para ficar no site; pode deixar aqui.
+const SUPABASE_URL = "COLE_AQUI_A_URL_DO_PROJETO";
+const SUPABASE_CHAVE = "COLE_AQUI_A_CHAVE_PUBLICAVEL";
+
+// 2) AULAS — ficam no banco de dados (tabela "aulas") e são editadas
+//    pelo botão "Editar aula" do próprio site.
+let AULAS = [];
+
+// 3) LIVROS À VENDA — "capa" é opcional (link ou "imagens/livro1.jpg"); "link" é a página de compra
+const LIVROS = [
+  { titulo: "Título do Livro 1", autor: "Seu Nome", preco: "R$ 49,90", desc: "Uma breve descrição do livro.", capa: "", link: "https://exemplo.com/livro1" },
+  { titulo: "Título do Livro 2", autor: "Seu Nome", preco: "R$ 59,90", desc: "Uma breve descrição do livro.", capa: "", link: "https://exemplo.com/livro2" },
+  { titulo: "Título do Livro 3", autor: "Seu Nome", preco: "R$ 39,90", desc: "Uma breve descrição do livro.", capa: "", link: "https://exemplo.com/livro3" }
+];
+
+/* =====================================================================
+   FUNCIONAMENTO DO SITE
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const guardar = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+const ler = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+const apagar = k => { try { localStorage.removeItem(k); } catch (e) {} };
+
+/* ----- Tema claro / escuro ----- */
+function temaAtual() {
+  return document.documentElement.dataset.theme ||
+    (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+}
+function aplicarTema(t) {
+  document.documentElement.dataset.theme = t;
+  document.querySelectorAll(".js-tema").forEach(b => { b.textContent = t === "dark" ? "☀ Modo claro" : "☾ Modo escuro"; });
+}
+document.querySelectorAll(".js-tema").forEach(b => b.onclick = () => {
+  const novo = temaAtual() === "dark" ? "light" : "dark";
+  guardar("tema", novo); aplicarTema(novo);
+});
+aplicarTema(ler("tema") || temaAtual());
+
+/* ----- Conexão e login (Supabase) ----- */
+const configurado = !SUPABASE_URL.startsWith("COLE");
+const sb = configurado ? window.supabase.createClient(SUPABASE_URL, SUPABASE_CHAVE) : null;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+let perfil = { admin: false, escrita: false };
+
+async function entrar(sessao) {
+  const { data: p, error } = await sb.from("perfis").select("admin,escrita").eq("id", sessao.user.id).single();
+  if (error || !p) { await sb.auth.signOut(); throw new Error("sem perfil"); }
+  const { data: aulas, error: e2 } = await sb.from("aulas").select("*").order("ordem");
+  if (e2) throw e2;
+  perfil = { admin: p.admin, escrita: p.admin || p.escrita };
+  AULAS = aulas.map(a => ({ id: a.id, titulo: a.titulo, duracao: a.duracao || "", desc: a.descricao || "", src: a.video_url || "" }));
+  const email = sessao.user.email.toLowerCase();
+  guardar("sessao", email); // só para lembrar o progresso das aulas
+  mostrarTela("app");
+  $("nav-admin").classList.toggle("hidden", !perfil.admin);
+  $("editar").classList.toggle("hidden", !perfil.escrita);
+  ["livros", "admin"].forEach(n => { $("view-" + n).classList.add("hidden"); $("nav-" + n).setAttribute("aria-current", "false"); });
+  $("view-aulas").classList.remove("hidden"); $("nav-aulas").setAttribute("aria-current", "page");
+  $("form-edit").classList.add("hidden");
+  const salva = Number(ler("aula:" + email)) || 0;
+  atual = Math.max(0, Math.min(salva, AULAS.length - 1));
+  desenharAulas();
+  mostrarAula(atual);
+}
+$("form-login").onsubmit = async e => {
+  e.preventDefault();
+  if (!sb) { $("erro").textContent = "Falta conectar o site ao Supabase: preencha SUPABASE_URL e SUPABASE_CHAVE no arquivo."; return; }
+  $("erro").textContent = "Entrando…";
+  const { data, error } = await sb.auth.signInWithPassword({ email: $("usuario").value.trim().toLowerCase(), password: $("senha").value });
+  if (error) { $("erro").textContent = "E-mail ou senha incorretos. Confira os dados e tente de novo."; return; }
+  try { await entrar(data.session); $("erro").textContent = ""; }
+  catch (x) { $("erro").textContent = "Não foi possível carregar o curso. Tente novamente em instantes."; }
+};
+$("sair").onclick = async () => {
+  if (sb) await sb.auth.signOut();
+  apagar("sessao"); $("player").innerHTML = ""; perfil = { admin: false, escrita: false };
+  mostrarTela("inicio");
+  $("form-login").reset();
+};
+
+/* ----- Navegação ----- */
+function ir(aba) {
+  if (aba === "admin" && !perfil.admin) return;
+  ["aulas", "livros", "admin"].forEach(n => {
+    $("view-" + n).classList.toggle("hidden", n !== aba);
+    $("nav-" + n).setAttribute("aria-current", n === aba ? "page" : "false");
+  });
+  if (aba !== "aulas") $("player").innerHTML = ""; // pausa o vídeo ao sair da aba
+  else mostrarAula(atual);
+  if (aba === "admin") desenharAdmin();
+}
+$("nav-aulas").onclick = () => ir("aulas");
+$("nav-livros").onclick = () => ir("livros");
+$("nav-admin").onclick = () => ir("admin");
+
+/* ----- Edição de aulas (quem tem permissão de escrita) ----- */
+$("editar").onclick = () => {
+  if (!perfil.escrita) return;
+  const a = AULAS[atual];
+  $("e-titulo").value = a.titulo; $("e-desc").value = a.desc; $("e-src").value = a.src; $("e-msg").textContent = "";
+  $("form-edit").classList.toggle("hidden");
+};
+$("form-edit").onsubmit = async e => {
+  e.preventDefault();
+  if (!perfil.escrita) return;
+  const src = $("e-src").value.trim();
+  if (src && !/^(https:\/\/|[\w\/.-]+$)/i.test(src)) { $("e-msg").textContent = "Use um link que comece com https:// ou o caminho de um arquivo, como videos/modulo1.mp4."; return; }
+  const a = AULAS[atual];
+  const nova = { titulo: $("e-titulo").value.trim() || a.titulo, descricao: $("e-desc").value.trim(), video_url: src };
+  const { data, error } = await sb.from("aulas").update(nova).eq("id", a.id).select();
+  if (error || !data || !data.length) { $("e-msg").textContent = "Não foi possível salvar. Confira se você tem permissão de escrita."; return; }
+  Object.assign(a, { titulo: nova.titulo, desc: nova.descricao, src });
+  $("form-edit").classList.add("hidden"); mostrarAula(atual);
+};
+
+/* ----- Painel de administração ----- */
+const msgAdmin = t => { $("admin-msg").textContent = t; };
+async function chamar(corpo) {
+  const r = await sb.functions.invoke("gerenciar-usuarios", { body: corpo });
+  if (r.error) {
+    let m = "Não foi possível concluir a ação.";
+    try { m = (await r.error.context.json()).erro || m; } catch (x) {}
+    throw new Error(m);
+  }
+}
+async function desenharAdmin() {
+  const { data, error } = await sb.from("perfis").select("id,email,admin,escrita").order("email");
+  if (error) return msgAdmin("Não foi possível carregar os usuários.");
+  $("usuarios-lista").innerHTML = data.map(u => {
+    const e = esc(u.email);
+    if (u.admin) return `<tr><td>${e}</td><td>Administrador</td><td>Fixo</td></tr>`;
+    return `<tr><td>${e}</td><td><select data-esc="${u.id}"><option value="0"${u.escrita ? "" : " selected"}>Somente leitura</option><option value="1"${u.escrita ? " selected" : ""}>Com escrita</option></select></td><td><button class="ghost" data-rm="${u.id}">Remover</button></td></tr>`;
+  }).join("");
+  document.querySelectorAll("[data-esc]").forEach(sel => sel.onchange = async () => {
+    const { error } = await sb.from("perfis").update({ escrita: sel.value === "1" }).eq("id", sel.dataset.esc);
+    msgAdmin(error ? "Não foi possível alterar a permissão." : "Permissão atualizada.");
+  });
+  document.querySelectorAll("[data-rm]").forEach(b => b.onclick = async () => {
+    if (!confirm("Remover este usuário? Ele perderá o acesso ao curso.")) return;
+    try { await chamar({ acao: "remover", id: b.dataset.rm }); msgAdmin("Usuário removido."); desenharAdmin(); }
+    catch (x) { msgAdmin(x.message); }
+  });
+}
+$("form-novo").onsubmit = async e => {
+  e.preventDefault();
+  if (!perfil.admin) return;
+  const f = e.target;
+  const email = $("n-email").value.trim().toLowerCase(), senha = $("n-senha").value, escrita = $("n-escrita").value === "1";
+  if (senha.length < 6) return msgAdmin("A senha precisa ter pelo menos 6 caracteres.");
+  msgAdmin("Criando…");
+  try { await chamar({ acao: "criar", email, senha, escrita }); f.reset(); msgAdmin("Usuário criado: " + email); desenharAdmin(); }
+  catch (x) { msgAdmin(x.message); }
+};
+
+/* ----- Aulas ----- */
+let atual = 0;
+const user = () => ler("sessao") || "";
+const feitas = () => { try { return JSON.parse(ler("feitas:" + user()) || "[]"); } catch (e) { return []; } };
+
+function desenharAulas() {
+  const f = feitas();
+  $("itens").innerHTML = AULAS.map((a, i) =>
+    `<button class="item" data-i="${i}" aria-current="${i === atual}">
+       <span class="ok ${f.includes(i) ? "feito" : ""}">${f.includes(i) ? "✓" : ""}</span>
+       <span class="t">${a.titulo}<small>${a.duracao}</small></span>
+     </button>`).join("");
+  document.querySelectorAll(".item").forEach(b => b.onclick = () => mostrarAula(Number(b.dataset.i)));
+  const pct = Math.round(f.length / AULAS.length * 100);
+  $("prog-txt").textContent = `${f.length} de ${AULAS.length} aulas concluídas`;
+  $("prog-barra").style.width = pct + "%";
+}
+
+function mostrarAula(i) {
+  atual = i; guardar("aula:" + user(), i);
+  const a = AULAS[i], p = $("player");
+  p.innerHTML = "";
+  if (!a.src) {
+    p.innerHTML = '<div class="vazio">O vídeo desta aula ainda não foi adicionado.</div>';
+  } else if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(a.src)) {
+    const v = document.createElement("video");
+    v.controls = true; v.preload = "metadata"; v.src = a.src;
+    v.setAttribute("controlslist", "nodownload");
+    p.appendChild(v);
+  } else {
+    const f = document.createElement("iframe");
+    f.src = a.src; f.title = a.titulo; f.allowFullscreen = true;
+    f.allow = "accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen";
+    p.appendChild(f);
+  }
+  $("aula-titulo").textContent = a.titulo;
+  $("aula-desc").textContent = a.desc;
+  atualizarBotao(); desenharAulas();
+}
+
+function atualizarBotao() {
+  const feito = feitas().includes(atual);
+  $("concluir").textContent = feito ? "Marcar como não concluída" : "Marcar como concluída";
+}
+$("concluir").onclick = () => {
+  let f = feitas();
+  f = f.includes(atual) ? f.filter(n => n !== atual) : [...f, atual];
+  guardar("feitas:" + user(), JSON.stringify(f));
+  atualizarBotao(); desenharAulas();
+};
+
+/* ----- Livros ----- */
+$("grade").innerHTML = LIVROS.map(l => `
+  <article class="livro">
+    <div class="capa">${l.capa ? `<img src="${l.capa}" alt="Capa de ${l.titulo}">` : l.titulo}</div>
+    <div class="corpo">
+      <h3>${l.titulo}</h3>
+      <span class="autor">${l.autor}</span>
+      <span class="desc">${l.desc}</span>
+      <span class="preco">${l.preco}</span>
+      <a class="btn" href="${l.link}" target="_blank" rel="noopener">Comprar</a>
+    </div>
+  </article>`).join("");
+
+/* ----- Mantém a pessoa logada ao recarregar a página ----- */
+/* ----- Página inicial (pública) ----- */
+const mostrarTela = t => {
+  ["inicio", "login", "app"].forEach(n => $(n).classList.toggle("hidden", n !== t));
+  if (t === "inicio") montarVideos(); else $("lp-videos").innerHTML = ""; // pausa os vídeos ao sair
+  window.scrollTo(0, 0);
+};
+function montarVideos() {
+  $("lp-videos").innerHTML = PAGINA.videos.map((v, i) => `<div class="vcard"><div class="player" id="lpv${i}"></div><h3>${esc(v.titulo)}</h3></div>`).join("");
+  PAGINA.videos.forEach((v, i) => {
+    const box = $("lpv" + i);
+    if (!v.src) { box.innerHTML = '<div class="vazio">Vídeo em breve.</div>'; return; }
+    if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(v.src)) {
+      const el = document.createElement("video"); el.controls = true; el.preload = "metadata"; el.src = v.src; box.appendChild(el);
+    } else {
+      const f = document.createElement("iframe"); f.src = v.src; f.title = v.titulo; f.allowFullscreen = true;
+      f.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen"; box.appendChild(f);
+    }
+  });
+}
+document.title = PAGINA.marca;
+$("lp-marca").textContent = PAGINA.marca;
+$("lp-selo").textContent = PAGINA.selo;
+$("lp-titulo").textContent = PAGINA.titulo;
+$("lp-sub").textContent = PAGINA.subtitulo;
+$("lp-sobre").textContent = PAGINA.sobre;
+$("lp-rodape").textContent = PAGINA.rodape;
+$("lp-destaques").innerHTML = PAGINA.destaques.map(d => `<li>${esc(d)}</li>`).join("");
+$("lp-modulos").innerHTML = PAGINA.modulos.map(m => `<li>${esc(m)}</li>`).join("");
+$("lp-depoimentos").innerHTML = PAGINA.depoimentos.map(d => `
+  <figure class="dep">
+    <blockquote>“${esc(d.texto)}”</blockquote>
+    <figcaption class="quem">
+      <span class="avatar">${d.foto ? `<img src="${esc(d.foto)}" alt="">` : esc(d.nome.charAt(0).toUpperCase())}</span>
+      <span><strong>${esc(d.nome)}</strong><small>${esc(d.detalhe)}</small></span>
+    </figcaption>
+  </figure>`).join("");
+document.querySelectorAll(".js-inscrever").forEach(a => { a.href = PAGINA.linkInscricao; });
+$("lp-entrar").onclick = $("lp-entrar2").onclick = () => mostrarTela("login");
+$("voltar").onclick = () => mostrarTela("inicio");
+montarVideos();
+
+(async () => {
+  if (!sb) return;
+  const { data } = await sb.auth.getSession();
+  if (data.session) { try { await entrar(data.session); } catch (e) {} }
+})();
+</script>
+</body>
+</html>
